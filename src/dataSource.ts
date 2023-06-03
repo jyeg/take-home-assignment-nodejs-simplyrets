@@ -7,6 +7,7 @@ const AppDataSource = new DataSource({
   database: ':memory:',
   entities: [Property],
   synchronize: true, // synchronize the database schema with the entity classes
+  
 });
 
 export default AppDataSource;

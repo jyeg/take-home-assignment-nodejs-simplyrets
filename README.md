@@ -1,3 +1,3 @@
-Please read the PLEASE_READ_FIRST.md first.
+# Overview
 
-Please document your code & design decisions here.
+# App Architecture
