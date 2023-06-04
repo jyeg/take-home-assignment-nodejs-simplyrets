@@ -1,10 +1,12 @@
-import express, { Request } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
+
 import bodyParser from 'body-parser';
-import PropertyController from '../controllers/PropertyController';
-import PropertyService from '../services/PropertyService';
+import PropertyController from '../controllers/propertyController1';
+import PropertyService from '../services/propertyService1';
 import { Property } from '../entities';
 import AppDataSource from '../dataSource';
-import { PaginationParams } from '../types';
+import { SearchParams } from '../types';
+import { validateAndSanitizeFilters } from '../middlewares/filterParamsHandler';
 
 export const propertyRoutes = express.Router();
 
@@ -14,13 +16,17 @@ const controller = new PropertyController(service);
 
 propertyRoutes.use(bodyParser.json());
 
-propertyRoutes.get('/', async (req, res, next) => {
-  try {
-    return await controller.getAll(req as Request<PaginationParams>, res);
-  } catch (e) {
-    next(e);
-  }
-});
+propertyRoutes.get(
+  '/',
+  validateAndSanitizeFilters,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      return await controller.getAll(req as Request<SearchParams>, res);
+    } catch (e) {
+      next(e);
+    }
+  },
+);
 
 propertyRoutes.get('/:id', async (req, res, next) => {
   try {

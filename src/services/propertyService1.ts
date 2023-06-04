@@ -1,5 +1,9 @@
 import { Repository } from 'typeorm';
 import { Property } from '../entities/Property';
+import { ParsedParamsWithOperator } from '../types';
+import { createWhereFromParams } from '../utilities/filtersUtil';
+
+const DEFAULT_LIMIT = 10;
 
 class PropertyService {
   private repository: Repository<Property>;
@@ -8,10 +12,17 @@ class PropertyService {
     this.repository = repository;
   }
 
-  async getAll(cursor?: number, limit: number = 10): Promise<Property[]> {
-    if (cursor) {
+  async getAll(
+    limit: number = DEFAULT_LIMIT,
+    page?: number,
+    filters?: ParsedParamsWithOperator,
+  ): Promise<Property[]> {
+    const where = filters ? createWhereFromParams(filters) : undefined;
+
+    if (page) {
       return await this.repository.find({
-        skip: cursor,
+        skip: page,
+        where,
         take: limit,
         order: {
           id: 'ASC',
@@ -19,6 +30,7 @@ class PropertyService {
       });
     } else {
       return await this.repository.find({
+        where,
         take: limit,
         order: {
           id: 'ASC',

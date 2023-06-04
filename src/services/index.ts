@@ -1,1 +1,1 @@
-export * from './PropertyService';
+export * from './propertyService1';

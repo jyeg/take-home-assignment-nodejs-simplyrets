@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import PropertyService from '../services/PropertyService';
+import PropertyService from '../services/propertyService1';
 import { Property } from '../entities/Property';
-import { PaginationParams } from '../types';
+import { SearchParams, ParsedParamsWithOperator } from '../types';
 
 class PropertyController {
   private service: PropertyService;
@@ -10,18 +10,29 @@ class PropertyController {
     this.service = service;
   }
 
-  async getAll(req: Request<PaginationParams>, res: Response) {
-    const parsedLimit = parseInt(req.query.limit as string) || 10;
-    const parsedCursor = req.query.cursor
-      ? parseInt(req.query.cursor as string)
-      : undefined;
+  async getAll(req: Request<SearchParams>, res: Response) {
+    // TODO: extract into reusable functions to parse the query parameters.
+    // extract the limit and cursor from the query parameters
+    const limit = parseInt(req.query.limit as string) || 10;
+    const page = parseInt(req.query.page as string) || 1;
+    // Calculate the number of items to skip:
+    const skip = (page - 1) * limit;
 
-    const properties = await this.service.getAll(parsedCursor, parsedLimit);
+    // Parse the filters from the query parameters
+    const filters = Object.keys(req.query).reduce((acc, key) => {
+      if (key === 'limit' || key === 'page') {
+        return acc;
+      }
+
+      const [operator, value] = (req.query[key] as string).split(':');
+      acc[key] = { operator, value };
+      return acc;
+    }, {} as ParsedParamsWithOperator);
+
+    const properties = await this.service.getAll(limit, skip, filters);
 
     res.json({
       data: properties,
-      cursor: properties.length ? properties[properties.length - 1].id : null,
-      hasMore: properties.length === parsedLimit,
     });
   }
 
