@@ -1,8 +1,8 @@
 import express, { NextFunction, Request, Response } from 'express';
 
 import bodyParser from 'body-parser';
-import PropertyController from '../controllers/propertyController1';
-import PropertyService from '../services/propertyService1';
+import PropertyController from '../controllers/propertyController';
+import PropertyService from '../services/propertyService';
 import { Property } from '../entities';
 import AppDataSource from '../dataSource';
 import { SearchParams } from '../types';

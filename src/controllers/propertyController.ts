@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import PropertyService from '../services/propertyService1';
+import PropertyService from '../services/propertyService';
 import { Property } from '../entities/Property';
 import { SearchParams, ParsedParamsWithOperator } from '../types';
 
