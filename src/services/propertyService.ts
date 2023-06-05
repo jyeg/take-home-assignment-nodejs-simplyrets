@@ -19,24 +19,14 @@ class PropertyService {
   ): Promise<Property[]> {
     const where = filters ? createWhereFromParams(filters) : undefined;
 
-    if (page) {
-      return await this.repository.find({
-        skip: page,
-        where,
-        take: limit,
-        order: {
-          id: 'ASC',
-        },
-      });
-    } else {
-      return await this.repository.find({
-        where,
-        take: limit,
-        order: {
-          id: 'ASC',
-        },
-      });
-    }
+    return await this.repository.find({
+      ...(page ? { skip: page } : {}), // If page is defined, add skip to the query
+      where,
+      take: limit,
+      order: {
+        id: 'ASC',
+      },
+    });
   }
 
   async getById(id: number): Promise<Property | null> {

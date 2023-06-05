@@ -7,6 +7,7 @@ import { Property } from '../entities';
 import AppDataSource from '../dataSource';
 import { SearchParams } from '../types';
 import { validateAndSanitizeFilters } from '../middlewares/filterParamsHandler';
+import { param } from 'express-validator';
 
 export const propertyRoutes = express.Router();
 
@@ -20,24 +21,26 @@ propertyRoutes.get(
   '/',
   validateAndSanitizeFilters,
   async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      return await controller.getAll(req as Request<SearchParams>, res);
-    } catch (e) {
-      next(e);
-    }
+    return await controller.getAll(req as Request<SearchParams>, res, next);
   },
 );
 
-propertyRoutes.get('/:id', async (req, res, next) => {
-  try {
-    await controller.getById(req, res);
-  } catch (e) {
-    next(e);
-  }
+propertyRoutes.get(
+  '/:id',
+  param('id').isInt().withMessage('Must be an integer'),
+  async (req, res, next) => {
+    return await controller.getById(req as Request<{ id: number }>, res, next);
+  },
+);
+
+propertyRoutes.post('/', async (req, res, next) => {
+  return await controller.create(req, res, next);
 });
 
-propertyRoutes.post('/', controller.create);
+propertyRoutes.put('/:id', async (req, res, next) => {
+  return await controller.update(req, res, next);
+});
 
-propertyRoutes.put('/:id', controller.update);
-
-propertyRoutes.delete('/:id', controller.delete);
+propertyRoutes.delete('/:id', async (req, res, next) => {
+  return await controller.delete(req, res, next);
+});

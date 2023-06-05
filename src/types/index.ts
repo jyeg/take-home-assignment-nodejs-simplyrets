@@ -1,6 +1,6 @@
 export type PaginationParams = {
-  page?: string;
-  limit?: string;
+  page?: number;
+  limit?: number;
 };
 
 export type FilterParams = {
@@ -15,5 +15,5 @@ export interface SearchParams extends PaginationParams, FilterParams {}
 
 export type ParsedParamsWithOperator = {
   // [K in keyof FilterParams]: { operator: string; value: string };
-  [key: string]: { operator: string; value: string };
+  [key: string]: { operator: string; value: string | number };
 };
