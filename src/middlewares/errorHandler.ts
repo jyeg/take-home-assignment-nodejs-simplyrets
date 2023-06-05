@@ -21,7 +21,7 @@ export const errorLogger = (
   response: Response,
   next: NextFunction,
 ) => {
-  console.error(`error ${error.message}`);
+  // console.error(`error ${error.message}`); // TODO implement logger library
   next(error); // calling next middleware
 };
 
@@ -36,7 +36,7 @@ export const errorResponder = (
   response.header('Content-Type', 'application/json');
 
   const status = error.statusCode || 400;
-  response.status(status).send(error.message);
+  response.status(status).send(error);
 };
 
 // Fallback Middleware function for returning
